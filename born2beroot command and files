@@ -1,0 +1,119 @@
+
+	*******
+	*SETUP*
+	*******
+
+- GUI : $(ls /usr/bin/*session)
+
+_ UFW service : $(sudo ufw status)
+
+_ SSH service : $(systemctl status ssh)
+
+- Operating system : $(uname -a)
+
+
+
+	******
+	*USER*
+	******
+User :
+$(users)
+
+User's group :
+$(groups mgruson)
+
+Add user : sudo useradd [username]
+Delete user : sudo userdel [username]
+Add user password : sudo passwd [username]
+Add group : sudo groupadd [groupname]
+Delete group : sudo groupdel [groupname]
+Add a user to a group : sudo usermod -a -G [groupname] [username]
+
+*/etc/login.defs*
+
+PASS_MAX_DAYS	30
+PASS_MIN_DAYS	2
+PASS_WARN_AGE	7
+
+
+*/etc/pam.d/common-password*
+
+# here are the per-package modules (the "Primary" block)
+password	requisite			pam_pwquality.so retry=3 dcredit=-1 difok=7 enforce_for_root maxrepeat=3 minlen=10 reject_username ucredit=-1 usercheck=1
+
+
+	******
+	*SUDO*
+	******
+
+*/etc*sudoers*
+
+# User privilege specification
+root	ALL=(ALL:ALL) ALL
+mgruson ALL=(ALL:ALL) ALL
+# Allow members of group sudo to execute any command
+%sudo	ALL=(ALL:ALL) ALL
+%mgruson ALL=(ALL) NOPASSWD:ALL
+
+command : sudo visudo 
+
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Defaults        passwd_tries=3
+Defaults        badpass_message="Wrong password, try again!"
+Defaults        logfile="/var/log/sudo/sudo.log"
+Defaults        log_input, log_output
+Defaults        requiretty
+
+
+	************
+	*MONITORING*
+	************
+
+*sudo crontab -e*
+
+*/10 * * * * bash /home/mgruson/monitoring.sh
+
+cf. monitoring.sh
+
+	*****
+	*SSH*
+	*****
+
+*etc/ssh/sshd_config*
+
+PermitRootLogin no
+Port 4242
+
+command :
+
+allow a port : sudo ufw allow [portnumber]
+delete a port added : sudo ufw delete allow [portnumber]
+
+SSH installed : $(dpkg -s openssh-server)
+
+SSH working :$(sudo systemctl status ssh)
+
+SSH connection :$(ss -tunlp)
+
+How to connect : sudo ssh [username]@localhost[or IP] -p [portnumber]
+
+*command*
+
+SSH installed : $(dpkg -s openssh-server)
+
+SSH working : $(sudo systemctl status ssh)
+
+SSH connection : $(ss -tunlp)
+
+	*****
+	*UFW*
+	*****
+
+SSH installed : $(dpkg -s openssh-server)
+
+SSH working : $(sudo systemctl status ssh)
+
+SSH connection : $(ss -tunlp)
+
